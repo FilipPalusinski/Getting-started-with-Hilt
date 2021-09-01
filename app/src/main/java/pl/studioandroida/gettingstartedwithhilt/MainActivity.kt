@@ -33,7 +33,7 @@ class MyFragment: Fragment() {
 
 }
 
-@FragmentScoped
+@ActivityScoped
 class SomeClass @Inject constructor(
     //thats a constructor injection
     private val someOtherClass: SomeOtherClass
