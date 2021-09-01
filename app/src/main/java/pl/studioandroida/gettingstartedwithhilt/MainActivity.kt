@@ -2,8 +2,12 @@ package pl.studioandroida.gettingstartedwithhilt
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -21,7 +25,15 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+@AndroidEntryPoint
+class MyFragment: Fragment() {
 
+    @Inject
+    lateinit var someClass: SomeClass
+
+}
+
+@FragmentScoped
 class SomeClass @Inject constructor(
     //thats a constructor injection
     private val someOtherClass: SomeOtherClass
