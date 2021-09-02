@@ -4,15 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.scopes.ActivityScoped
-import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    //thats a field injection
     @Inject
     lateinit var someClass: SomeClass
 
@@ -21,34 +17,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         println(someClass.doAThing())
-        println(someClass.doSomeOtherThing())
     }
 }
 
-@AndroidEntryPoint
-class MyFragment: Fragment() {
-
-    @Inject
-    lateinit var someClass: SomeClass
-
-}
-
-@ActivityScoped
-class SomeClass @Inject constructor(
-    //thats a constructor injection
-    private val someOtherClass: SomeOtherClass
-) {
-    fun doAThing(): String {
-        return "Look i did a thing!"
-    }
-
-    fun doSomeOtherThing(): String {
-        return someOtherClass.doSomeOtherThing()
+class SomeClass
+@Inject
+constructor(
+    private val someInterfaceImpl: SomeInterface
+){
+    fun doAThing(): String{
+        return "Look I got: ${someInterfaceImpl.getAThing()}"
     }
 }
 
-class SomeOtherClass @Inject constructor() {
-    fun doSomeOtherThing(): String {
-        return "Look I did some other thing!"
+class SomeInterfaceImpl
+@Inject
+constructor() : SomeInterface{
+    override fun getAThing(): String {
+        return "A Thing"
     }
+}
+
+interface SomeInterface {
+    fun getAThing(): String
 }
