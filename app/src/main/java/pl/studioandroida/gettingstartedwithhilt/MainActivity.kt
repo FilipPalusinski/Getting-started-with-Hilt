@@ -3,8 +3,10 @@ package pl.studioandroida.gettingstartedwithhilt
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
@@ -28,15 +30,18 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class SomeClass @Inject constructor(private val someInterfaceImpl: SomeInterface) {
-    fun doAThing(): String{
+class SomeClass @Inject constructor(
+    private val someInterfaceImpl: SomeInterface,
+    private val gson: Gson
+) {
+    fun doAThing(): String {
         return "Look I got: ${someInterfaceImpl.getAThing()}"
     }
 }
 
-class SomeInterfaceImpl @Inject constructor() : SomeInterface{
+class SomeInterfaceImpl @Inject constructor(private val someDependency: String) : SomeInterface {
     override fun getAThing(): String {
-        return "A Thing"
+        return "A Thing, $someDependency"
     }
 }
 
@@ -44,14 +49,28 @@ interface SomeInterface {
     fun getAThing(): String
 }
 
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
-abstract class MyModule{
+class MyModule {
 
-    @ActivityScoped
-    @Binds
-    abstract fun bindSomeDependency(
-        someImpl: SomeInterfaceImpl
-    ) : SomeInterface
+    @Singleton
+    @Provides
+    fun provideSomeString(): String {
+        return "some string"
+    }
+
+    @Singleton
+    @Provides
+    fun provideSomeInterface(
+        someString: String
+    ): SomeInterface {
+        return SomeInterfaceImpl(someString)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGson(): Gson {
+        return Gson()
+    }
 }
 
